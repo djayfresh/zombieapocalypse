@@ -1,0 +1,12 @@
+
+.header {
+    text-align: center;
+}
+
+.my-game {
+    position: relative;
+    left: 50%;
+    top: 10%;
+
+    border: 1px solid black;
+}
