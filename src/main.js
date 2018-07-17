@@ -76,7 +76,7 @@ function GameObject(id, asset, lifespan = -1, assetType) {
     this.asset = asset;
     this.lifespan = lifespan;
     this.timeAlive = 0;
-    this.assetType;
+    this.assetType = assetType;
     this.destoryed = false;
 
     this.setPosition = function(x, y){
@@ -108,14 +108,24 @@ var Renderer = {
         this.gameObjects.forEach(gameObject => {
             gameObject.update(dt);
         });
+        
+        this.checkCollision();
 
+        this.gameObjects.filter(o => o.shouldDestory()).forEach((gameObject, i) => {
+            this.removeRenderedObject(gameObject.asset);
+        });
+
+        this.gameObjects = this.gameObjects.filter(o => !o.shouldDestory());
+    },
+
+    checkCollision: function() {
         this.gameObjects.filter(o => o.assetType == AssetType.Enemy).forEach((enemy) => {
             this.gameObjects.filter(o => o.assetType != AssetType.Enemy).forEach((gameObject) => {
-                if(CollisionDetection.hitRectangle(enemy.asset, gameObject.asset)){
-                    console.log("hit!", gameObject, enemy);
+                if(CollisionDetection.hitRectangle(enemy.asset, gameObject.asset)) {
                     switch(gameObject.assetType){
                         case AssetType.Bullet: 
                             enemy.destoryed = true;
+                            gameObject.destoryed = true;//kill the bullet
                             break;
                         case AssetType.Player:
                             gameObject.destoryed = true;//kill the player
@@ -124,12 +134,6 @@ var Renderer = {
                 }
             });
         });
-
-        this.gameObjects.filter(o => o.shouldDestory()).forEach((gameObject, i) => {
-            this.removeRenderedObject(gameObject.asset);
-        });
-
-        this.gameObjects = this.gameObjects.filter(o => !o.shouldDestory());
     },
 
     addRectangle: function(x, y, vx, vy, width, height, lifespan = -1, assetType){
@@ -144,11 +148,7 @@ var Renderer = {
         rectangle.vy = vy;
 
         this.gameObjects.push(new GameObject(this.gameObjectId, rectangle, lifespan, assetType));
-        console.log("Game objects", this.gameObjects);
-        var toRender = this.getById(this.gameObjectId);
-        console.log("Found", toRender);
-
-        this.addRenderedObject(toRender.asset);
+        this.addRenderedObject(this.getById(this.gameObjectId).asset);
 
         return this.gameObjectId++;
     },
@@ -219,13 +219,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.body.appendChild(Game.app.view);
 
 
-    Renderer.addRectangle(0, 0, 0.1, 0.1, 10, 10, 300, AssetType.Bullet);
+    // Renderer.addRectangle(0, 0, 0.1, 0.1, 10, 10, 300, AssetType.Bullet);
 
-    Renderer.addRectangle(0, 0, 1, 1, 20, 20, -1, AssetType.Bullet);
+    // Renderer.addRectangle(0, 0, 1, 1, 20, 20, -1, AssetType.Bullet);
 
     
-    Renderer.addRectangle(0, 20, 1, 0, 20, 20, -1, AssetType.Enemy);
+    Renderer.addRectangle(60, 20, 1, 0, 20, 20, -1, AssetType.Enemy);
     Renderer.addRectangle(600, 20, -11, 0, 10, 10, -1, AssetType.Bullet);
 
     Game.start();
+
+    // var gameStarted = true;
+    // setInterval(() => {
+    //     if(gameStarted){
+    //         Game.pause();
+    //     }
+    //     else {
+    //         Game.start();
+    //     }
+    //     gameStarted = !gameStarted;
+    // }, 2000);
 });
