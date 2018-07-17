@@ -13,11 +13,62 @@ var AssetType = {
     Bullet:2
 };
 
-
-let type = "WebGL";
-if(!PIXI.utils.isWebGLSupported()){
-    type = "canvas";
+var Assets = {
+    Images: {
+        Globie: "assets/images/globie.png"
+    }
 }
+
+function Position(x, y, vx = 0, vy = 0) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+}
+
+var BoundKeys = [];
+function keyboard(keyCode) {
+    let key = {};
+    key.code = keyCode;
+    key.isDown = false;
+    key.isUp = true;
+    key.press = undefined;
+    key.release = undefined;
+    BoundKeys.push(keyCode);
+    //The `downHandler`
+    key.downHandler = event => {
+      if (event.keyCode === key.code) {
+        if (key.isUp && key.press) key.press();
+        key.isDown = true;
+        key.isUp = false;
+      }
+
+      if(BoundKeys.find(k => k == event.keyCode)){
+        event.preventDefault();
+      }
+    };
+  
+    //The `upHandler`
+    key.upHandler = event => {
+      if (event.keyCode === key.code) {
+        if (key.isDown && key.release) key.release();
+        key.isDown = false;
+        key.isUp = true;
+      }
+      if(BoundKeys.find(k => k == event.keyCode)){
+        event.preventDefault();
+      }
+    };
+  
+    //Attach event listeners
+    window.addEventListener(
+      "keydown", key.downHandler.bind(key), false
+    );
+    window.addEventListener(
+      "keyup", key.upHandler.bind(key), false
+    );
+    return key;
+  }
 
 var CollisionDetection = {
     hitRectangle: function(r1, r2) {
@@ -136,16 +187,30 @@ var Renderer = {
         });
     },
 
-    addRectangle: function(x, y, vx, vy, width, height, lifespan = -1, assetType){
+    addImage: function(src, position, width, height, lifespan = -1, assetType) {
+        var loadTexture = PIXI.loader.resources[src];
+        var image = new PIXI.Sprite(loadTexture.texture);
+        image.x = position.x;
+        image.y = position.y;
+        image.vx = position.vx;
+        image.vy = position.vy;
+        
+        this.gameObjects.push(new GameObject(this.gameObjectId, image, lifespan, assetType));
+        this.addRenderedObject(this.getById(this.gameObjectId).asset);
+
+        return this.gameObjectId++;
+    },
+
+    addRectangle: function(position, width, height, lifespan = -1, assetType) {
         var rectangle = new Graphics();
         rectangle.lineStyle(2, 0xFF3300, 1);
         rectangle.beginFill(0x66CCFF);
         rectangle.drawRect(0, 0, width, height);
         rectangle.endFill();
-        rectangle.x = x;
-        rectangle.y = y;
-        rectangle.vx = vx;
-        rectangle.vy = vy;
+        rectangle.x = position.x;
+        rectangle.y = position.y;
+        rectangle.vx = position.vx;
+        rectangle.vy = position.vy;
 
         this.gameObjects.push(new GameObject(this.gameObjectId, rectangle, lifespan, assetType));
         this.addRenderedObject(this.getById(this.gameObjectId).asset);
@@ -169,12 +234,25 @@ var Renderer = {
 
 var Game = {
     app: null,
+    space: keyboard(32), left: keyboard(37), right: keyboard(39),
 
-    setup: function() {
+    setup: function(resources, callback) {
         this.app = new PIXI.Application({width: CONFIG.width, height: CONFIG.height});
         
         this.app.view.style.left = (documentWidth/2) - (CONFIG.width/2);
         this.app.view.className = 'my-game';
+
+        if(resources){
+            resources.forEach((resource) => {
+                PIXI.loader
+                .add(resource, {crossOrigin: 'anonymous'});
+            });
+
+            PIXI.loader.load(callback);
+
+        }else {
+            callback();
+        }
     },
 
     start: function() {
@@ -205,6 +283,8 @@ var Game = {
 
     state: null,
     HighSchore: 0,
+
+    
 }
 
 
@@ -213,30 +293,37 @@ window.addEventListener("resize", function() {
 }, false);
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    Game.setup();
+    Game.setup(null, () => {
+        //Add the canvas that Pixi automatically created for you to the HTML document
+        document.body.appendChild(Game.app.view);
 
-    //Add the canvas that Pixi automatically created for you to the HTML document
-    document.body.appendChild(Game.app.view);
 
+        // Renderer.addRectangle(0, 0, 0.1, 0.1, 10, 10, 300, AssetType.Bullet);
 
-    // Renderer.addRectangle(0, 0, 0.1, 0.1, 10, 10, 300, AssetType.Bullet);
+        // Renderer.addRectangle(0, 0, 1, 1, 20, 20, -1, AssetType.Bullet);
 
-    // Renderer.addRectangle(0, 0, 1, 1, 20, 20, -1, AssetType.Bullet);
+        
+        Renderer.addRectangle(new Position(60, 20, 1, 0), 20, 20, -1, AssetType.Enemy);
+        Renderer.addRectangle(new Position(600, 20, -11, 0), 10, 10, -1, AssetType.Bullet);
+        //Renderer.addImage(Assets.Images.Globie, 100, 10, 0, 0, 0, 0, -1, AssetType.Player);
 
-    
-    Renderer.addRectangle(60, 20, 1, 0, 20, 20, -1, AssetType.Enemy);
-    Renderer.addRectangle(600, 20, -11, 0, 10, 10, -1, AssetType.Bullet);
+        
+        var playerId = Renderer.addRectangle(new Position(300, 20, 0, 0), 20, 20, -1, AssetType.Player);
+        var player = Renderer.getById(playerId);
 
-    Game.start();
+        Game.left.press = function() {
+            player.setVelocity(-1, player.asset.vy);
+        };        
+        Game.left.release = function() {
+            player.setVelocity(0, player.asset.vy);
+        };
+        Game.right.press = function() {
+            player.setVelocity(1, player.asset.vy);
+        };
+        Game.right.release = function() {
+            player.setVelocity(0, player.asset.vy);
+        };
 
-    // var gameStarted = true;
-    // setInterval(() => {
-    //     if(gameStarted){
-    //         Game.pause();
-    //     }
-    //     else {
-    //         Game.start();
-    //     }
-    //     gameStarted = !gameStarted;
-    // }, 2000);
+        Game.start();
+    });
 });
