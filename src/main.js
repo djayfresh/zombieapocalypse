@@ -35,6 +35,12 @@ function keyboard(keyCode) {
     key.press = undefined;
     key.release = undefined;
     BoundKeys.push(keyCode);
+
+    key.onClick = (onPress, onRelease) => {
+        key.press = onPress;
+        key.release = onRelease;
+    }
+
     //The `downHandler`
     key.downHandler = event => {
       if (event.keyCode === key.code) {
@@ -69,6 +75,58 @@ function keyboard(keyCode) {
     );
     return key;
   }
+
+
+function mouse(button) {
+    let mouse = {};
+    mouse.button = button;
+    mouse.isDown = false;
+    mouse.isUp = true;
+    mouse.press = undefined;
+    mouse.release = undefined;
+    mouse.move = undefined;
+    mouse.x = 0;
+    mouse.y = 0;
+
+    //The `downHandler`
+    mouse.downHandler = event => {
+        if(mouse.button == event.button){
+            if (mouse.isUp && mouse.press) mouse.press();
+            mouse.isDown = true;
+            mouse.isUp = false;
+        }
+    };
+
+    //The `upHandler`
+    mouse.upHandler = event => {
+        if(mouse.button == event.button){
+            if (mouse.isDown && mouse.release) mouse.release();
+            mouse.isDown = false;
+            mouse.isUp = true;
+        }
+    };
+
+    //The `moveHandler`
+    mouse.moveHandler = event => {
+        if(mouse.move) mouse.move(event);
+
+        mouse.x = event.screenX;
+        mouse.y = event.screenY;
+    };
+
+    //Attach event listeners
+    window.addEventListener(
+        "mousedown", mouse.downHandler.bind(mouse), false
+    );
+    window.addEventListener(
+        "mouseup", mouse.upHandler.bind(mouse), false
+    );
+    window.addEventListener(
+        "mousemove", mouse.moveHandler.bind(mouse), false
+    );
+
+    return mouse;
+}
 
 var CollisionDetection = {
     hitRectangle: function(r1, r2) {
@@ -202,9 +260,9 @@ var Renderer = {
     },
 
     addRectangle: function(position, width, height, lifespan = -1, assetType) {
+        var color = assetType == AssetType.Player? 0x550033 : assetType == AssetType.Enemy? 0x770000 : 0x66CCFF;
         var rectangle = new Graphics();
-        rectangle.lineStyle(2, 0xFF3300, 1);
-        rectangle.beginFill(0x66CCFF);
+        rectangle.beginFill(color);
         rectangle.drawRect(0, 0, width, height);
         rectangle.endFill();
         rectangle.x = position.x;
@@ -234,13 +292,17 @@ var Renderer = {
 
 var Game = {
     app: null,
-    space: keyboard(32), left: keyboard(37), right: keyboard(39),
+    space: keyboard(32), left: keyboard(37), right: keyboard(39), up: keyboard(38), down: keyboard(40),
+    mouse: mouse(undefined), leftClick: mouse(0), rightClick: mouse(2),
+    player: undefined,
 
     setup: function(resources, callback) {
         this.app = new PIXI.Application({width: CONFIG.width, height: CONFIG.height});
         
         this.app.view.style.left = (documentWidth/2) - (CONFIG.width/2);
         this.app.view.className = 'my-game';
+
+        this.player = player();
 
         if(resources){
             resources.forEach((resource) => {
@@ -265,6 +327,7 @@ var Game = {
 
     update: function(dt) {
         Renderer.update(dt);
+        this.player.update(dt);
     },
 
     pause: function(dt) {
@@ -285,6 +348,59 @@ var Game = {
     HighSchore: 0,
 
     
+}
+
+function weapon(fireRate, damage, shoot, ammo = -1){
+    let gun = {};
+    gun.fireRate = fireRate;
+    gun.damage = damage;
+    gun.ammo = ammo;
+    gun.shots = 0;
+    gun.shoot = shoot;
+
+    gun.lastShot = 0;
+
+    gun.fire = (dt) => {
+        if(gun.lastShot > gun.fireRate && (gun.shots < gun.ammo || gun.ammo == -1)){
+            gun.shoot();
+            gun.shots++;
+            gun.lastShot = 0;
+        }
+    };
+
+    gun.reload = () => {
+        gun.shots = 0;
+    };
+
+    return gun;
+}
+
+var Pistol = weapon(10, 1, undefined, -1);
+
+function player(){
+    let plyr = {};
+    plyr.id = Renderer.addRectangle(new Position(300, 20, 0, 0), 20, 20, -1, AssetType.Player);
+    plyr.gameObject = Renderer.getById(plyr.id);
+    
+    plyr.shotBullet = () => {
+        var directionX = Game.mouse.x - plyr.gameObject.asset.x;
+        var directionY = Game.mouse.y - plyr.gameObject.asset.y;
+
+        Renderer.addRectangle(new Position(plyr.gameObject.asset.x, plyr.gameObject.asset.y, -11, 0), 5, 5, -1, AssetType.Bullet);
+    };
+
+    plyr.gun = Pistol;
+    plyr.gun.shoot = plyr.shotBullet;
+
+    plyr.update = (dt) => {
+        if(Game.leftClick.isDown){
+            plyr.gun.fire(dt);
+        }
+
+        plyr.gun.lastShot += dt;
+    };
+
+    return plyr;
 }
 
 
@@ -308,21 +424,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
         //Renderer.addImage(Assets.Images.Globie, 100, 10, 0, 0, 0, 0, -1, AssetType.Player);
 
         
-        var playerId = Renderer.addRectangle(new Position(300, 20, 0, 0), 20, 20, -1, AssetType.Player);
-        var player = Renderer.getById(playerId);
+        var player1 = Game.player.gameObject;
+        
+        Game.left.onClick(function() {
+            player1.setVelocity(-1, player1.asset.vy);
+        }, function() {
+            player1.setVelocity(0, player1.asset.vy);
+        });
 
-        Game.left.press = function() {
-            player.setVelocity(-1, player.asset.vy);
-        };        
-        Game.left.release = function() {
-            player.setVelocity(0, player.asset.vy);
-        };
-        Game.right.press = function() {
-            player.setVelocity(1, player.asset.vy);
-        };
-        Game.right.release = function() {
-            player.setVelocity(0, player.asset.vy);
-        };
+        Game.right.onClick(function() {
+            player1.setVelocity(1, player1.asset.vy);
+        }, function() {
+            player1.setVelocity(0, player1.asset.vy);
+        });
+
+        Game.up.onClick(function() {
+            player1.setVelocity(player1.asset.vx, -1);
+        }, function() {
+            player1.setVelocity(player1.asset.vx, 0);
+        });
+
+        Game.down.onClick(function() {
+            player1.setVelocity(player1.asset.vx, 1);
+        }, function() {
+            player1.setVelocity(player1.asset.vx, 0);
+        });
 
         Game.start();
     });
