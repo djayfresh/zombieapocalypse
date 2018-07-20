@@ -4,7 +4,7 @@ var documentWidth = window.innerWidth;
 
 let CONFIG = {
     width: documentWidth * 0.75,
-    height: 800
+    height: 400
 }
 
 var AssetType = {
@@ -252,12 +252,17 @@ var Renderer = {
                 }
                 else if(gameObject1.assetType == AssetType.Player && gameObject2.assetType == AssetType.Wall){
                     if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
-                        gameObject1.asset.x -= gameObject1.asset.vx;
+                        //gameObject1.asset.x -= gameObject1.asset.vx;
+                        Level.undoMove(Level.lastMove.vx, 0);
                         if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
-                            gameObject1.asset.x += gameObject1.asset.vx;
-                            gameObject1.asset.y -= gameObject1.asset.vy;
+                            
+                            Level.undoMove(-Level.lastMove.vx, 0);
+                            Level.undoMove(0, Level.lastMove.vy);
+                            //gameObject1.asset.x += gameObject1.asset.vx;
+                            //gameObject1.asset.y -= gameObject1.asset.vy;
                             if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
-                                gameObject1.asset.x -= gameObject1.asset.vx;
+                                //gameObject1.asset.x -= gameObject1.asset.vx;
+                                Level.undoMove(Level.lastMove.vx, 0);
                             }
                         }
                     }
@@ -324,6 +329,8 @@ var Game = {
         this.app.view.className = 'my-game';
 
         this.player = player();
+        this.player.gameObject.asset.x = CONFIG.width/2;
+        this.player.gameObject.asset.y = CONFIG.height/2;
 
         if(resources){
             resources.forEach((resource) => {
@@ -363,6 +370,7 @@ var Game = {
         var gameWidth = (window.innerWidth * 0.75);
         this.app.view.style.left = (window.innerWidth/2) - (gameWidth/2);
         this.app.renderer.resize(gameWidth, CONFIG.height);
+        this.player.gameObject.asset.x = gameWidth/2;
     },
 
     state: null,
@@ -427,6 +435,7 @@ function player(){
 
 var Level = {
     walls: [{x: 0, y:0, w:80, h:600}, {x: 600, y: 0, w: 160, h: 600}],
+    lastMove: {vx: 0, vy:0},
 
     load: function() {
         this.walls.forEach((wall) => {
@@ -435,10 +444,21 @@ var Level = {
     },
 
     move: function(vx, vy) {
+        this.lastMove.vx = vx;
+        this.lastMove.vy = vy;
+
         this.walls.forEach((wall) => { 
-            let wallAsset = Renderer.getById(wall.id).asset;
+            var wallAsset = Renderer.getById(wall.id).asset;
             wallAsset.vx = vx;
             wallAsset.vy = vy;
+        });
+    },
+
+    undoMove: function(vx, vy) {
+        this.walls.forEach((wall) => { 
+            var wallAsset = Renderer.getById(wall.id).asset;
+            wallAsset.x -= vx;
+            wallAsset.y -= vy;
         });
     }
 }
@@ -468,29 +488,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
         var player1 = Game.player.gameObject;
         
         Game.left.onClick(function() {
-            player1.setVelocity(-1, player1.asset.vy);
-            //Level.move(-1, player1.asset.vy);
+            //player1.setVelocity(-1, player1.asset.vy);
+            Level.move(-1, Level.lastMove.vy);
         }, function() {
-            //Level.move(0, player1.asset.vy);
-            player1.setVelocity(0, player1.asset.vy);
+            Level.move(0, Level.lastMove.vy);
+            //player1.setVelocity(0, player1.asset.vy);
         });
 
         Game.right.onClick(function() {
-            player1.setVelocity(1, player1.asset.vy);
+            Level.move(1, Level.lastMove.vy);
+            //player1.setVelocity(1, player1.asset.vy);
         }, function() {
-            player1.setVelocity(0, player1.asset.vy);
+            Level.move(0, Level.lastMove.vy);
+            //player1.setVelocity(0, player1.asset.vy);
         });
 
         Game.up.onClick(function() {
-            player1.setVelocity(player1.asset.vx, -1);
+            Level.move(Level.lastMove.vx, -1);
+            //player1.setVelocity(player1.asset.vx, -1);
         }, function() {
-            player1.setVelocity(player1.asset.vx, 0);
+            Level.move(Level.lastMove.vx, 0);
+            //player1.setVelocity(player1.asset.vx, 0);
         });
 
         Game.down.onClick(function() {
-            player1.setVelocity(player1.asset.vx, 1);
+            Level.move(Level.lastMove.vx, 1);
+            //player1.setVelocity(player1.asset.vx, 1);
         }, function() {
-            player1.setVelocity(player1.asset.vx, 0);
+            Level.move(Level.lastMove.vx, 0);
+            //player1.setVelocity(player1.asset.vx, 0);
         });
 
         Game.start();
