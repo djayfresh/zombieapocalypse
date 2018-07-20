@@ -10,7 +10,8 @@ let CONFIG = {
 var AssetType = {
     Player:0,
     Enemy:1,
-    Bullet:2
+    Bullet:2,
+    Wall: 3,
 };
 
 var Assets = {
@@ -32,13 +33,15 @@ function keyboard(keyCode) {
     key.code = keyCode;
     key.isDown = false;
     key.isUp = true;
-    key.press = undefined;
-    key.release = undefined;
+    key.press = () => { key.onPress.forEach(press => { press(); }); };
+    key.release = () => { key.onRelease.forEach(release => { release(); }); };
     BoundKeys.push(keyCode);
+    key.onPress = [];
+    key.onRelease = [];
 
     key.onClick = (onPress, onRelease) => {
-        key.press = onPress;
-        key.release = onRelease;
+        key.onPress.push(onPress);
+        key.onRelease.push(onRelease);
     }
 
     //The `downHandler`
@@ -94,6 +97,8 @@ function mouse(button) {
             if (mouse.isUp && mouse.press) mouse.press();
             mouse.isDown = true;
             mouse.isUp = false;
+
+            event.preventDefault();
         }
     };
 
@@ -103,6 +108,8 @@ function mouse(button) {
             if (mouse.isDown && mouse.release) mouse.release();
             mouse.isDown = false;
             mouse.isUp = true;
+            
+            event.preventDefault();
         }
     };
 
@@ -228,17 +235,31 @@ var Renderer = {
     },
 
     checkCollision: function() {
-        this.gameObjects.filter(o => o.assetType == AssetType.Enemy).forEach((enemy) => {
-            this.gameObjects.filter(o => o.assetType != AssetType.Enemy).forEach((gameObject) => {
-                if(CollisionDetection.hitRectangle(enemy.asset, gameObject.asset)) {
-                    switch(gameObject.assetType){
-                        case AssetType.Bullet: 
-                            enemy.destoryed = true;
-                            gameObject.destoryed = true;//kill the bullet
-                            break;
-                        case AssetType.Player:
-                            gameObject.destoryed = true;//kill the player
-                            break;
+        this.gameObjects.forEach((gameObject1) => {
+            this.gameObjects.forEach((gameObject2) => {
+                if(gameObject1.assetType == AssetType.Enemy){
+                    if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)) {
+                        switch(gameObject2.assetType){
+                            case AssetType.Bullet: 
+                                gameObject1.destoryed = true;
+                                gameObject2.destoryed = true;//kill the bullet
+                                break;
+                            case AssetType.Player:
+                                gameObject2.destoryed = true;//kill the player
+                                break;
+                        }
+                    }
+                }
+                else if(gameObject1.assetType == AssetType.Player && gameObject2.assetType == AssetType.Wall){
+                    if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
+                        gameObject1.asset.x -= gameObject1.asset.vx;
+                        if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
+                            gameObject1.asset.x += gameObject1.asset.vx;
+                            gameObject1.asset.y -= gameObject1.asset.vy;
+                            if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)){
+                                gameObject1.asset.x -= gameObject1.asset.vx;
+                            }
+                        }
                     }
                 }
             });
@@ -260,7 +281,7 @@ var Renderer = {
     },
 
     addRectangle: function(position, width, height, lifespan = -1, assetType) {
-        var color = assetType == AssetType.Player? 0x550033 : assetType == AssetType.Enemy? 0x770000 : 0x66CCFF;
+        var color = assetType == AssetType.Player? 0x550033 : assetType == AssetType.Enemy? 0x770000 : assetType == AssetType.Wall? 0xFFFFFF : 0x66CCFF;
         var rectangle = new Graphics();
         rectangle.beginFill(color);
         rectangle.drawRect(0, 0, width, height);
@@ -292,7 +313,7 @@ var Renderer = {
 
 var Game = {
     app: null,
-    space: keyboard(32), left: keyboard(37), right: keyboard(39), up: keyboard(38), down: keyboard(40),
+    space: keyboard(32), left: keyboard(65), right: keyboard(68), up: keyboard(87), down: keyboard(83),
     mouse: mouse(undefined), leftClick: mouse(0), rightClick: mouse(2),
     player: undefined,
 
@@ -404,6 +425,25 @@ function player(){
 }
 
 
+var Level = {
+    walls: [{x: 0, y:0, w:80, h:600}, {x: 600, y: 0, w: 160, h: 600}],
+
+    load: function() {
+        this.walls.forEach((wall) => {
+            wall.id = Renderer.addRectangle(new Position(wall.x, wall.y, 0, 0), wall.w, wall.h, -1, AssetType.Wall);
+        });
+    },
+
+    move: function(vx, vy) {
+        this.walls.forEach((wall) => { 
+            let wallAsset = Renderer.getById(wall.id).asset;
+            wallAsset.vx = vx;
+            wallAsset.vy = vy;
+        });
+    }
+}
+
+
 window.addEventListener("resize", function() {
     Game.resize();
 }, false);
@@ -412,6 +452,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     Game.setup(null, () => {
         //Add the canvas that Pixi automatically created for you to the HTML document
         document.body.appendChild(Game.app.view);
+        Level.load();
 
 
         // Renderer.addRectangle(0, 0, 0.1, 0.1, 10, 10, 300, AssetType.Bullet);
@@ -428,7 +469,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
         
         Game.left.onClick(function() {
             player1.setVelocity(-1, player1.asset.vy);
+            //Level.move(-1, player1.asset.vy);
         }, function() {
+            //Level.move(0, player1.asset.vy);
             player1.setVelocity(0, player1.asset.vy);
         });
 
