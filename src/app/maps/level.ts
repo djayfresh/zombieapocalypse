@@ -1,14 +1,15 @@
-import { GameObject, AssetType } from "../renderer/game-object";
+import { GameObject, AssetType, Container } from "../renderer/game-object";
 
 export interface Level {
-    walls: Wall[];
-
+    walls: Container;
+    
     onWin: () => void;
     onLose: () => void;
     onPause: () => void;
     
     setup(): void;
     update(dt): void;
+
 }
 
 export class Wall extends GameObject {

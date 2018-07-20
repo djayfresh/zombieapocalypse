@@ -41,9 +41,13 @@ export class Container extends GameObject {
     asset: PIXI.Container;
     children: GameObject[] = [];
 
+    constructor(assetType: AssetType, lifespan = -1){
+        super(0, new PIXI.Container(), assetType, lifespan);
+    }
+
     add(gameObject: GameObject){
         this.children.push(gameObject);
-        
+
         this.asset.addChild(gameObject.asset);
     }
 }
