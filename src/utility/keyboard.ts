@@ -16,9 +16,12 @@ export class Keyboard {
         window.addEventListener("keyup", this.upHandler.bind(this), false);
     }
 
-    onClick(onPress: Function, onRelease: Function){
+    onClick(onPress: Function, onRelease?: Function){
         this.onPress.push(onPress);
-        this.onRelease.push(onRelease);
+        
+        if(onRelease){
+            this.onRelease.push(onRelease);
+        }
     }
 
     private press() {

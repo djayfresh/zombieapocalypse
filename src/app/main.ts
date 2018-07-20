@@ -12,6 +12,8 @@ export class Game {
     app: PIXI.Application;
     player: Player;
     level: Level;
+    up: Keyboard;
+    down: Keyboard;
 
     private levels: Level[] = [new Level1()];
 
@@ -25,6 +27,8 @@ export class Game {
 
         this.app.ticker.add((dt) => {if(this.state) this.state(dt);});
 
+        this.app.stage.scale = new PIXI.Point(1,1);
+
         this.player = new Player();
         this.player.asset.x = Config.width/2;
         this.player.asset.y = Config.height/2;
@@ -32,6 +36,12 @@ export class Game {
 
         this.level = this.levels[0];
         this.initLevel();
+
+        this.up = new Keyboard(38);
+        this.up.onClick(() => { this.app.stage.scale = new PIXI.Point(this.app.stage.scale.x + 0.1, this.app.stage.scale.y + 0.1); }, () => {});
+
+        this.down = new Keyboard(40);
+        this.down.onClick(() => { this.app.stage.scale = new PIXI.Point(this.app.stage.scale.x - 0.1, this.app.stage.scale.y - 0.1); }, () => {});
 
         if(resources && resources.length > 0){
             resources.forEach((resource) => {
@@ -94,7 +104,6 @@ export class Game {
     }
 
     addContainer(gameObject: Container){
-        console.log("Add container", gameObject);
         Renderer.add(gameObject);
         gameObject.children.forEach((child) => {
             Renderer.add(child);
