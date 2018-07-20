@@ -408,6 +408,7 @@ var Pistol = weapon(10, 1, undefined, -1);
 
 function player(){
     let plyr = {};
+    
     plyr.id = Renderer.addRectangle(new Position(300, 20, 0, 0), 20, 20, -1, AssetType.Player);
     plyr.gameObject = Renderer.getById(plyr.id);
     
@@ -469,7 +470,7 @@ window.addEventListener("resize", function() {
 }, false);
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    Game.setup(null, () => {
+    Game.setup([Assets.Images.Globie], () => {
         //Add the canvas that Pixi automatically created for you to the HTML document
         document.body.appendChild(Game.app.view);
         Level.load();
@@ -479,11 +480,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         // Renderer.addRectangle(0, 0, 1, 1, 20, 20, -1, AssetType.Bullet);
 
+        //Renderer.addImage(Assets.Images.Globie, new Position(300, 20, 0, 0), 0, 0, -1, AssetType.Player);
         
         Renderer.addRectangle(new Position(60, 20, 1, 0), 20, 20, -1, AssetType.Enemy);
         Renderer.addRectangle(new Position(600, 20, -11, 0), 10, 10, -1, AssetType.Bullet);
-        //Renderer.addImage(Assets.Images.Globie, 100, 10, 0, 0, 0, 0, -1, AssetType.Player);
-
         
         var player1 = Game.player.gameObject;
         
