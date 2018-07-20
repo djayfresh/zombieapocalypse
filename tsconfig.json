@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "allowJs": true,
+        "outFile": "build/main.js",
+        "module": "commonjs",
+        "sourceMap": true,
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

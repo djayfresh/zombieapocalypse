@@ -2,7 +2,7 @@
   "name": "zombie",
   "version": "1.0.0",
   "description": "game",
-  "main": "package.js",
+  "main": "src/app/app.ts",
   "directories": {
     "lib": "lib",
     "src": "src",
@@ -12,7 +12,9 @@
     "http-server": "^0.11.1",
     "nodejs": "0.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^2.9.2"
+  },
   "author": "Doug Fresh",
   "license": "ISC"
 }
