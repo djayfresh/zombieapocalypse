@@ -1,3 +1,15 @@
 import { Game } from './src/app/main';
 
-Game.run();
+var game = new Game();
+
+window.addEventListener("resize", function() {
+    game.resize();
+}, false);
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    game.setup([], () => {
+        
+
+        game.play();
+    });
+});
