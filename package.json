@@ -8,12 +8,20 @@
     "src": "src",
     "assets": "assets"
   },
+  "scripts": {
+    "watch": "webpack --mode development --watch"
+  },
   "dependencies": {
+    "@types/typescript": "^2.0.0",
     "http-server": "^0.11.1",
-    "nodejs": "0.0.0"
+    "node": "^10.7.0",
+    "nodejs": "0.0.0",
+    "ts-loader": "^4.4.2"
   },
   "devDependencies": {
-    "typescript": "^2.9.2"
+    "typescript": "^2.9.2",
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.0.4"
   },
   "author": "Doug Fresh",
   "license": "ISC"

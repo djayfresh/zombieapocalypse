@@ -1,9 +1,3 @@
-import { App as main} from './src/app/main';
-
-class App {
-    static run() {
-        console.log("Running");
-    }
-}
+import { App } from './src/app/main';
 
 App.run();
