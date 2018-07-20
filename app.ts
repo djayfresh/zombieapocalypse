@@ -1,3 +1,3 @@
-import { App } from './src/app/main';
+import { Game } from './src/app/main';
 
-App.run();
+Game.run();

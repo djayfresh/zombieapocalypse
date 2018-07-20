@@ -12,10 +12,12 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "@types/pixi.js": "^4.8.0",
     "@types/typescript": "^2.0.0",
     "http-server": "^0.11.1",
     "node": "^10.7.0",
     "nodejs": "0.0.0",
+    "pixi.js": "^4.8.1",
     "ts-loader": "^4.4.2"
   },
   "devDependencies": {

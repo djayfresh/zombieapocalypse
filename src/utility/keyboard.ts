@@ -43,7 +43,7 @@ export class Keyboard {
             this.isUp = false;
         }
 
-        if(Keyboard.BoundKeys.filter(k => k == event.keyCode).length == 0){
+        if(Keyboard.BoundKeys.filter(k => k == event.keyCode).length != 0){
             event.preventDefault();
         }
     };
@@ -57,7 +57,7 @@ export class Keyboard {
             this.isDown = false;
             this.isUp = true;
         }
-        if(Keyboard.BoundKeys.filter(k => k == event.keyCode).length == 0){
+        if(Keyboard.BoundKeys.filter(k => k == event.keyCode).length != 0){
             event.preventDefault();
         }
     };
