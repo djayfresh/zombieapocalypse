@@ -2,7 +2,7 @@
   "name": "zombie",
   "version": "1.0.0",
   "description": "game",
-  "main": "src/app/app.ts",
+  "main": "app.ts",
   "directories": {
     "lib": "lib",
     "src": "src",
