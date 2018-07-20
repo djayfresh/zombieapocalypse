@@ -1,0 +1,17 @@
+{
+  "name": "zombie",
+  "version": "1.0.0",
+  "description": "game",
+  "main": "package.js",
+  "directories": {
+    "lib": "lib",
+	  "src": "src",
+	  "assets": "assets"
+  },
+  "dependencies": {
+    "nodejs": "0.0.0"
+  },
+  "devDependencies": {},
+  "author": "Doug Fresh",
+  "license": "ISC"
+}
