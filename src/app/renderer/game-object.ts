@@ -14,6 +14,7 @@ export class GameObject {
         this.asset = asset;
         this.assetType = assetType;
         this.lifespan = lifespan;
+        this.velocity = new Vector2(0, 0);
     }
 
     setPosition(x, y){

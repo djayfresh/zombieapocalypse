@@ -7,6 +7,10 @@ export class Player extends GameObject {
 
     constructor() {
         super(0, new PIXI.Graphics, AssetType.Player);
+
+        this.asset.beginFill(0x550033);
+        this.asset.drawRect(0, 0, 20, 20);
+        this.asset.endFill();
     }
 
     update(dt) {

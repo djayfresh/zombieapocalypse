@@ -8,6 +8,10 @@ export class Level1 implements Level {
     onLose: () => void;
     onPause: () => void;
 
+    constructor(){
+        this.setup();
+    }
+
     setup(): void {
         //Initial setup
         var walls = [

@@ -13,7 +13,7 @@ export class Game {
     player: Player;
     level: Level;
 
-    private levels: any[] = [Level1];
+    private levels: Level[] = [new Level1()];
 
     state: (dt) => void;
 
@@ -28,6 +28,7 @@ export class Game {
         this.player = new Player();
         this.player.asset.x = Config.width/2;
         this.player.asset.y = Config.height/2;
+        this.spawn(this.player);
 
         this.level = this.levels[0];
         this.initLevel();
@@ -93,6 +94,7 @@ export class Game {
     }
 
     addContainer(gameObject: Container){
+        console.log("Add container", gameObject);
         Renderer.add(gameObject);
         gameObject.children.forEach((child) => {
             Renderer.add(child);

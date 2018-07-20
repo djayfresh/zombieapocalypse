@@ -13,7 +13,7 @@ export interface Level {
 }
 
 export class Wall extends GameObject {
-    static color: 0xFFFFFF;
+    static color: number = 0xFFFFFF;
     asset: PIXI.Graphics;
 
     constructor(x: number, y: number, w: number, h: number) {
@@ -25,5 +25,7 @@ export class Wall extends GameObject {
 
         this.asset.x = x;
         this.asset.y = y;
+
+        console.log("Walls", this.asset);
     }
 }
