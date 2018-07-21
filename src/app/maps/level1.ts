@@ -1,6 +1,8 @@
 import { Level, Wall } from './level';
-import { Container, AssetType } from '../renderer/game-object';
+import { Container, AssetType, GameObject } from '../renderer/game-object';
 import { Keyboard } from '../../utility/keyboard';
+import { CollisionLocation } from '../../utility/collision-detection';
+import { Game } from '../main';
 
 export class Level1 implements Level {
     walls: Container;
@@ -32,7 +34,7 @@ export class Level1 implements Level {
             // new Wall(150, 0, 400, 300),
         ];
 
-        this.walls = new Container(AssetType.Wall);
+        this.walls = new Container(AssetType.Container);
         this.walls.asset.x = 0;
         this.walls.asset.y = 0;
 
@@ -45,10 +47,10 @@ export class Level1 implements Level {
         this.up = new Keyboard(87);
         this.down = new Keyboard(83);
 
-        this.left.onClick(() => this.moveWall(-1, true), () => this.moveWall(0, 0));
-        this.right.onClick(() => this.moveWall(1, true), () => this.moveWall(0, 0));
-        this.down.onClick(() => this.moveWall(true, 1), () => this.moveWall(0, 0));
-        this.up.onClick(() => this.moveWall(true, -1), () => this.moveWall(0, 0));
+        this.left.onClick(() => this.moveWall(1, true), () => this.moveWall(0, true));
+        this.right.onClick(() => this.moveWall(-1, true), () => this.moveWall(0, true));
+        this.down.onClick(() => this.moveWall(true, -1), () => this.moveWall(true, 0));
+        this.up.onClick(() => this.moveWall(true, 1), () => this.moveWall(true, 0));
     }
 
     update(dt: any): void {
@@ -63,5 +65,33 @@ export class Level1 implements Level {
             x = this.walls.velocity.x;
 
         this.walls.setVelocity(x, y);
+    }
+
+    checkCollision(g1: GameObject, g2: GameObject) {
+        return g1.assetType == AssetType.Player && g2.assetType == AssetType.Wall;
+    }
+
+    onCollision(g1: GameObject, g2: GameObject, location: CollisionLocation) {
+        let padding = Game.dt;
+
+        switch(location){
+            case CollisionLocation.top: 
+            case CollisionLocation.bottom: 
+                this.moveCollisionWalls(true, -(this.walls.velocity.y * padding));
+                break;
+            case CollisionLocation.right:
+            case CollisionLocation.left:
+                this.moveCollisionWalls(-(this.walls.velocity.x * padding), true);
+                break;
+        }
+    }
+
+    private moveCollisionWalls(x: number | boolean, y: number | boolean){
+        if(y === true)
+            y = 0;
+        if(x === true)
+            x = 0;
+
+        this.walls.setPosition((this.walls.asset.x + <number>x), (this.walls.asset.y + <number>y));
     }
 }

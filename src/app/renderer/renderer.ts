@@ -1,4 +1,4 @@
-import { CollisionDetection } from "../../utility/collision-detection";
+import { CollisionDetection, CollisionLocation } from "../../utility/collision-detection";
 import { GameObject, AssetType } from "./game-object";
 
 
@@ -26,13 +26,17 @@ export class Renderer {
     private static checkCollision(onHits: OnHit[]) {
         this.gameObjects.forEach((gameObject1) => {
             this.gameObjects.forEach((gameObject2) => {
-                onHits.forEach((onHit) => {
-                    if(onHit.shouldCheck(gameObject1, gameObject2)){
-                        if(CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset)) {
-                            onHit.hit(gameObject1, gameObject2);
+                if(gameObject1.id != gameObject2.id){
+                    onHits.forEach((onHit) => {
+                        if(onHit.shouldCheck(gameObject1, gameObject2)){
+                            //console.log("Parents", gameObject1.id, gameObject1, "2", gameObject2.id, gameObject2);
+                            let collisionLocation = CollisionDetection.hitRectangle(gameObject1.asset, gameObject2.asset, gameObject1.asset.parent, gameObject2.asset.parent);
+                            if(collisionLocation != CollisionLocation.none) {
+                                onHit.hit(gameObject1, gameObject2, collisionLocation);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         });
     }
@@ -77,5 +81,5 @@ export class Renderer {
 
 export interface OnHit {
     shouldCheck(gameObject1: GameObject, gameObject2: GameObject): boolean;
-    hit(gameObject1: GameObject, gameObject2: GameObject): void;
+    hit(gameObject1: GameObject, gameObject2: GameObject, location: CollisionLocation): void;
 }

@@ -58,4 +58,5 @@ export enum AssetType {
     Enemy = 1,
     Bullet = 2,
     Wall = 3,
+    Container = 4,
 }

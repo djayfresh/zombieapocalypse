@@ -1,4 +1,5 @@
 import { GameObject, AssetType, Container } from "../renderer/game-object";
+import { CollisionLocation } from "../../utility/collision-detection";
 
 export interface Level {
     walls: Container;
@@ -10,6 +11,8 @@ export interface Level {
     setup(): void;
     update(dt): void;
 
+    checkCollision(g1: GameObject, g2: GameObject): boolean;
+    onCollision(g1: GameObject, g2: GameObject, loc: CollisionLocation): void;
 }
 
 export class Wall extends GameObject {

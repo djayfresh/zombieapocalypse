@@ -15,6 +15,8 @@ export class Game {
     up: Keyboard;
     down: Keyboard;
 
+    static dt: number;
+
     private levels: Level[] = [new Level1()];
 
     state: (dt) => void;
@@ -57,7 +59,12 @@ export class Game {
     }
 
     private update(dt){
-        Renderer.update(dt, []);
+        Game.dt = dt;
+        
+        Renderer.update(dt, [{
+            shouldCheck: (g1, g2) => this.level.checkCollision(g1, g2),
+            hit: (g1, g2, loc) =>  this.level.onCollision(g1, g2, loc)
+        }]);
         this.level.update(dt);
     }
 
