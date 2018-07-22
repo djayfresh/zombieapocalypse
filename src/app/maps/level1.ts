@@ -64,10 +64,10 @@ export class Level1 implements Level {
         this.up = new Keyboard(87);
         this.down = new Keyboard(83);
 
-        this.left.onClick(() => this.moveWall(1, true), () => this.moveWall(0, true));
-        this.right.onClick(() => this.moveWall(-1, true), () => this.moveWall(0, true));
-        this.down.onClick(() => this.moveWall(true, -1), () => this.moveWall(true, 0));
-        this.up.onClick(() => this.moveWall(true, 1), () => this.moveWall(true, 0));
+        this.left.onClick(() => this.moveLevel(1, true), () => this.moveLevel(0, true));
+        this.right.onClick(() => this.moveLevel(-1, true), () => this.moveLevel(0, true));
+        this.down.onClick(() => this.moveLevel(true, -1), () => this.moveLevel(true, 0));
+        this.up.onClick(() => this.moveLevel(true, 1), () => this.moveLevel(true, 0));
     }
 
     update(dt: any): void {
@@ -78,7 +78,7 @@ export class Level1 implements Level {
     }
 
     //keep the same velocity or set it to a number
-    private moveWall(x: number | boolean, y: number | boolean){
+    private moveLevel(x: number | boolean, y: number | boolean){
         if(y === true)
             y = this.levelContainer.velocity.y;
         if(x === true)

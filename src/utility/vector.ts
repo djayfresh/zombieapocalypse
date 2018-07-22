@@ -25,4 +25,8 @@ export class Vector2 {
     static subtract(v1: Vector2, v2: Vector2){
         return new Vector2((v1.x - v2.x), (v1.y - v2.y));
     }
+
+    static add(v1: Vector2, v2: Vector2){
+        return new Vector2((v1.x + v2.x), (v1.y + v2.y));
+    }
 }

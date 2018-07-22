@@ -1,3 +1,4 @@
+import { Vector2 } from "./vector";
 
 export enum CollisionLocation {
     top,
@@ -16,14 +17,18 @@ export class CollisionDetection {
         let centerX2 = r2.x + r2.width / 2;
         let centerY2 = r2.y + r2.height / 2;
 
-        if(parent1){
-            centerX1 += parent1.x;
-            centerY1 += parent1.y;
+        var parentVector = CollisionDetection.parentVector(parent1);
+        if(parentVector.x != 0 && parentVector.y != 0){
+            console.log("Parent Vector1:", parentVector, "Parent", parent1);
+            centerX1 += parentVector.x;
+            centerY1 += parentVector.y;
         }
 
-        if(parent2){
-            centerX2 += parent2.x;
-            centerY2 += parent2.y;
+        var parentVector2 = CollisionDetection.parentVector(parent2);
+        if(parentVector2.x != 0 && parentVector2.y != 0){
+            console.log("Parent Vector2:", parentVector2, "Parent", parent2);
+            centerX2 += parentVector2.x;
+            centerY2 += parentVector2.y;
         }
 
         let dx = centerX1 - centerX2;
@@ -59,5 +64,12 @@ export class CollisionDetection {
         //     console.log("Collision", dx, dy, "hit", hit, "depth", w, h);
         // }
         return hit;
+    }
+
+    private static parentVector(parent){
+        if(parent && parent.x && parent.y){
+            return Vector2.add(new Vector2(parent.x, parent.y), this.parentVector(parent.parent));
+        }
+        return new Vector2(0,0);
     }
 }

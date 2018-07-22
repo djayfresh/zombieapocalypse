@@ -16,7 +16,12 @@ export class Renderer {
         Renderer.checkCollision(onHit);
 
         Renderer.gameObjects.filter(o => o.shouldDestory()).forEach((gameObject) => {
-            Renderer.stage.removeChild(gameObject.asset);
+            if(gameObject.asset.parent != Renderer.stage){
+                gameObject.asset.parent.removeChild(gameObject.asset);
+            }
+            else {
+                Renderer.stage.removeChild(gameObject.asset);
+            }
         });
 
         Renderer.gameObjects = Renderer.gameObjects.filter(o => !o.shouldDestory());
