@@ -8,7 +8,7 @@ export class Enemy extends GameObject {
         super(0, new PIXI.Graphics, AssetType.Enemy, 4000);
 
         this.asset.beginFill(0x770000);
-        this.asset.drawRect(0, 0, 10, 10);
+        this.asset.drawRect(0, 0, 20, 20);
         this.asset.endFill();
     }
 

@@ -16,7 +16,7 @@ export class CollisionDetection {
         let centerX2 = r2.x + r2.width / 2;
         let centerY2 = r2.y + r2.height / 2;
 
-        if(parent2){
+        if(parent1){
             centerX1 += parent1.x;
             centerY1 += parent1.y;
         }

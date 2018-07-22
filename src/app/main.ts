@@ -16,6 +16,8 @@ export class Game {
     level: Level;
     up: Keyboard;
     down: Keyboard;
+    esc: Keyboard;
+    p: Keyboard;
 
     static dt: number;
     static center: Vector2;
@@ -53,6 +55,12 @@ export class Game {
         this.down = new Keyboard(40);
         this.down.onClick(() => { this.app.stage.scale = new PIXI.Point(this.app.stage.scale.x - 0.1, this.app.stage.scale.y - 0.1); }, () => {});
 
+        this.esc = new Keyboard(27);
+        this.esc.onClick(() => { this.togglePlay(); });
+
+        this.p = new Keyboard(80);
+        this.p.onClick(() => { this.togglePlay(); });
+
         if(resources && resources.length > 0){
             resources.forEach((resource) => {
                 PIXI.loader
@@ -63,6 +71,15 @@ export class Game {
 
         }else {
             callback();
+        }
+    }
+
+    private togglePlay() {
+        if(this.state == this.update){
+            this.pause();
+        }
+        else {
+            this.play();
         }
     }
 

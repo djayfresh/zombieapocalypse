@@ -28,7 +28,7 @@ export class Level1 implements Level {
 
         this.spawners = [];
         spawnerLocations.forEach((path) => {
-            this.spawners.push(new Spawner([path], 2000, 20, Game.player));
+            this.spawners.push(new Spawner([path], 500, 20, Game.player));
         });
 
         //Initial setup
@@ -56,7 +56,7 @@ export class Level1 implements Level {
         });
 
         this.spawners.forEach((spawner) => {
-            this.levelContainer.add(spawner.spawnerObject);
+            this.levelContainer.add(spawner);
         });
 
         this.left = new Keyboard(65);
@@ -88,28 +88,39 @@ export class Level1 implements Level {
     }
 
     checkCollision(g1: GameObject, g2: GameObject) {
-        return g1.assetType == AssetType.Player && (g2.assetType == AssetType.Wall || g2.assetType == AssetType.Enemy);
+        return (g1.assetType == AssetType.Player && (g2.assetType == AssetType.Wall || g2.assetType == AssetType.Enemy)) || 
+        (g1.assetType == AssetType.Enemy && g2.assetType == AssetType.Bullet);
     }
 
     onCollision(g1: GameObject, g2: GameObject, location: CollisionLocation) {
-        if(g2.assetType == AssetType.Wall){
-            let padding = Game.dt;
+        if(g1.assetType == AssetType.Player) {
+            if(g2.assetType == AssetType.Wall){
+                let padding = Game.dt;
 
-            switch(location){
-                case CollisionLocation.top: 
-                case CollisionLocation.bottom: 
-                    this.moveCollisionWalls(true, -(this.levelContainer.velocity.y * padding));
-                    break;
-                case CollisionLocation.right:
-                case CollisionLocation.left:
-                    this.moveCollisionWalls(-(this.levelContainer.velocity.x * padding), true);
-                    break;
+                switch(location){
+                    case CollisionLocation.top: 
+                    case CollisionLocation.bottom: 
+                        this.moveCollisionWalls(true, -(this.levelContainer.velocity.y * padding));
+                        break;
+                    case CollisionLocation.right:
+                    case CollisionLocation.left:
+                        this.moveCollisionWalls(-(this.levelContainer.velocity.x * padding), true);
+                        break;
+                }
+            }
+            else if(g2.assetType == AssetType.Enemy){
+                g2.destoryed = true;
+
+                Game.player.health--;
+                if(Game.player.health <= 0){
+                    this.onLose();
+                }
             }
         }
-        else if(g2.assetType == AssetType.Enemy){
-            Game.player.health--;
-            if(Game.player.health <= 0){
-                this.onLose();
+        else if(g1.assetType == AssetType.Enemy){
+            if(g2.assetType == AssetType.Bullet){
+                g2.destoryed = true;
+                g1.destoryed = true;
             }
         }
     }
