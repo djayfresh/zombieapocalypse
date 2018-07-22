@@ -1,13 +1,15 @@
-import { GameObject, AssetType } from "./renderer/game-object";
-import { Weapon, Bullet } from "./weapons/gun";
-import { Mouse, MouseButton } from "../utility/mouse";
-import { Renderer } from "./renderer/renderer";
-import { Vector2 } from "../utility/vector";
-import { Game } from "./main";
+import { GameObject, AssetType } from "../renderer/game-object";
+import { Weapon, Bullet } from "../weapons/gun";
+import { Mouse, MouseButton } from "../../utility/mouse";
+import { Renderer } from "../renderer/renderer";
+import { Vector2 } from "../../utility/vector";
+import { Game } from "../main";
+import { Config } from "../../config/base.config";
 
 export class Player extends GameObject {
     asset: PIXI.Graphics;
     gun: Weapon;
+    health: number = Config.player.health;
 
     trigger: Mouse;
 

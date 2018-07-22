@@ -3,9 +3,12 @@ import { Container, AssetType, GameObject } from '../renderer/game-object';
 import { Keyboard } from '../../utility/keyboard';
 import { CollisionLocation } from '../../utility/collision-detection';
 import { Game } from '../main';
+import { Spawner } from '../spawners/spawner';
+import { Vector2 } from '../../utility/vector';
 
 export class Level1 implements Level {
-    walls: Container;
+    spawners: Spawner[];
+    levelContainer: Container;
 
     onWin: () => void;
     onLose: () => void;
@@ -18,6 +21,16 @@ export class Level1 implements Level {
     }
 
     setup(): void {
+        var spawnerLocations = [
+            new Vector2(100, 100),
+            new Vector2(900, 100)
+        ];
+
+        this.spawners = [];
+        spawnerLocations.forEach((path) => {
+            this.spawners.push(new Spawner([path], 2000, 20, Game.player));
+        });
+
         //Initial setup
         var walls = [
             //border
@@ -34,12 +47,16 @@ export class Level1 implements Level {
             // new Wall(150, 0, 400, 300),
         ];
 
-        this.walls = new Container(AssetType.Container);
-        this.walls.asset.x = 0;
-        this.walls.asset.y = 0;
+        this.levelContainer = new Container(AssetType.Container);
+        this.levelContainer.asset.x = 0;
+        this.levelContainer.asset.y = 0;
 
         walls.forEach((wall) => {
-            this.walls.add(wall);
+            this.levelContainer.add(wall);
+        });
+
+        this.spawners.forEach((spawner) => {
+            this.levelContainer.add(spawner.spawnerObject);
         });
 
         this.left = new Keyboard(65);
@@ -55,34 +72,45 @@ export class Level1 implements Level {
 
     update(dt: any): void {
         //spawn enimes
+        this.spawners.forEach((spawner) => {
+            spawner.update(dt);
+        });
     }
 
     //keep the same velocity or set it to a number
     private moveWall(x: number | boolean, y: number | boolean){
         if(y === true)
-            y = this.walls.velocity.y;
+            y = this.levelContainer.velocity.y;
         if(x === true)
-            x = this.walls.velocity.x;
+            x = this.levelContainer.velocity.x;
 
-        this.walls.setVelocity(x, y);
+        this.levelContainer.setVelocity(x, y);
     }
 
     checkCollision(g1: GameObject, g2: GameObject) {
-        return g1.assetType == AssetType.Player && g2.assetType == AssetType.Wall;
+        return g1.assetType == AssetType.Player && (g2.assetType == AssetType.Wall || g2.assetType == AssetType.Enemy);
     }
 
     onCollision(g1: GameObject, g2: GameObject, location: CollisionLocation) {
-        let padding = Game.dt;
+        if(g2.assetType == AssetType.Wall){
+            let padding = Game.dt;
 
-        switch(location){
-            case CollisionLocation.top: 
-            case CollisionLocation.bottom: 
-                this.moveCollisionWalls(true, -(this.walls.velocity.y * padding));
-                break;
-            case CollisionLocation.right:
-            case CollisionLocation.left:
-                this.moveCollisionWalls(-(this.walls.velocity.x * padding), true);
-                break;
+            switch(location){
+                case CollisionLocation.top: 
+                case CollisionLocation.bottom: 
+                    this.moveCollisionWalls(true, -(this.levelContainer.velocity.y * padding));
+                    break;
+                case CollisionLocation.right:
+                case CollisionLocation.left:
+                    this.moveCollisionWalls(-(this.levelContainer.velocity.x * padding), true);
+                    break;
+            }
+        }
+        else if(g2.assetType == AssetType.Enemy){
+            Game.player.health--;
+            if(Game.player.health <= 0){
+                this.onLose();
+            }
         }
     }
 
@@ -92,6 +120,6 @@ export class Level1 implements Level {
         if(x === true)
             x = 0;
 
-        this.walls.setPosition((this.walls.asset.x + <number>x), (this.walls.asset.y + <number>y));
+        this.levelContainer.setPosition((this.levelContainer.asset.x + <number>x), (this.levelContainer.asset.y + <number>y));
     }
 }

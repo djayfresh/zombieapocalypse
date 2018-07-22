@@ -55,9 +55,9 @@ export class CollisionDetection {
             }
         }
 
-        if(hit != CollisionLocation.none){
-            console.log("Collision", dx, dy, "hit", hit, "depth", w, h);
-        }
+        // if(hit != CollisionLocation.none){
+        //     console.log("Collision", dx, dy, "hit", hit, "depth", w, h);
+        // }
         return hit;
     }
 }

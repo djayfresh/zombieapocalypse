@@ -1,8 +1,10 @@
 import { GameObject, AssetType, Container } from "../renderer/game-object";
 import { CollisionLocation } from "../../utility/collision-detection";
+import { Spawner } from "../spawners/spawner";
 
 export interface Level {
-    walls: Container;
+    levelContainer: Container;
+    spawners: Spawner[];
     
     onWin: () => void;
     onLose: () => void;

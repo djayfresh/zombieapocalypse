@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import { Keyboard } from '../utility/keyboard';
 import { Config } from '../config/base.config';
-import { Player } from './player';
+import { Player } from './characters/player';
 import { Renderer } from './renderer/renderer';
 import { GameObject, Container } from './renderer/game-object';
 import { Level } from './maps/level';
@@ -12,7 +12,7 @@ import { Vector2 } from '../utility/vector';
 
 export class Game {
     app: PIXI.Application;
-    player: Player;
+    static player: Player;
     level: Level;
     up: Keyboard;
     down: Keyboard;
@@ -20,7 +20,7 @@ export class Game {
     static dt: number;
     static center: Vector2;
 
-    private levels: Level[] = [new Level1()];
+    private levels: Level[];
 
     state: (dt) => void;
 
@@ -35,12 +35,15 @@ export class Game {
         this.app.stage.scale = new PIXI.Point(1,1);
         Renderer.stage = this.app.stage;
 
-        this.player = new Player();
-        this.player.asset.x = Config.width/2;
-        this.player.asset.y = Config.height/2;
-        this.player.setGun(Pistol);
-        this.spawn(this.player);
+        var player = new Player();
+        Game.player = player;
 
+        player.asset.x = Config.width/2;
+        player.asset.y = Config.height/2;
+        player.setGun(Pistol);
+        this.spawn(player);
+
+        this.levels = [new Level1()];
         this.level = this.levels[0];
         this.initLevel();
 
@@ -91,7 +94,7 @@ export class Game {
         this.level.onLose = () => { console.log("Lose"); this.clearLevel();}
         this.level.onWin = () => { console.log("Win"); this.clearLevel();}
 
-        this.addContainer(this.level.walls);
+        this.addContainer(this.level.levelContainer);
     }
 
     private clearLevel() {
@@ -106,7 +109,7 @@ export class Game {
         var gameWidth = (window.innerWidth * 0.75);
         this.app.view.style.left = ''+ ((window.innerWidth/2) - (gameWidth/2));
         this.app.renderer.resize(gameWidth, Config.height);
-        this.player.asset.x = gameWidth/2;
+        Game.player.asset.x = gameWidth/2;
         Game.center = new Vector2(gameWidth/2, this.app.screen.y + (Config.height/2));
     }
 

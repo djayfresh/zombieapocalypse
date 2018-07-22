@@ -22,6 +22,10 @@ export class GameObject {
         this.asset.y = y;
     };
 
+    getPosition(): Vector2{
+        return new Vector2(this.asset.x, this.asset.y);
+    }
+
     setVelocity(vx, vy){
         this.velocity.x = vx;
         this.velocity.y = vy;
@@ -59,4 +63,5 @@ export enum AssetType {
     Bullet = 2,
     Wall = 3,
     Container = 4,
+    Spawner = 5
 }
