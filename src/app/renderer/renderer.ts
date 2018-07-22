@@ -6,7 +6,7 @@ import { GameObject, AssetType } from "./game-object";
 export class Renderer {
     static gameObjects: GameObject[] = [];
     static gameObjectId: number = 0;
-    static toRemove: GameObject[];
+    static stage: PIXI.Container;
 
     static update(dt, onHit: OnHit[]) {
         Renderer.gameObjects.forEach(gameObject => {
@@ -15,9 +15,8 @@ export class Renderer {
         
         Renderer.checkCollision(onHit);
 
-        Renderer.toRemove = [];
-        Renderer.gameObjects.filter(o => o.shouldDestory()).forEach((gameObject, i) => {
-            Renderer.toRemove.push(gameObject);
+        Renderer.gameObjects.filter(o => o.shouldDestory()).forEach((gameObject) => {
+            Renderer.stage.removeChild(gameObject.asset);
         });
 
         Renderer.gameObjects = Renderer.gameObjects.filter(o => !o.shouldDestory());
@@ -49,6 +48,7 @@ export class Renderer {
         
         var gameObject = new GameObject(Renderer.gameObjectId, image, assetType, lifespan);
         gameObject.setVelocity(position.vx, position.vy);
+        Renderer.stage.addChild(gameObject.asset);
 
         return Renderer.add(gameObject).id;
     }
@@ -64,13 +64,17 @@ export class Renderer {
 
         var gameObject = new GameObject(Renderer.gameObjectId, rectangle, assetType, lifespan);
         gameObject.setVelocity(position.vx, position.vy);
+        Renderer.stage.addChild(gameObject.asset);
 
         return Renderer.add(gameObject).id;
     }
 
-    static add(gameObject: GameObject){
+    static add(gameObject: GameObject, addToStage: boolean = true){
         gameObject.id = Renderer.gameObjectId++;
         Renderer.gameObjects.push(gameObject);
+        if(addToStage){
+            Renderer.stage.addChild(gameObject.asset);
+        }
         return gameObject;
     }
 

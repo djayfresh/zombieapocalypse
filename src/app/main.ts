@@ -7,6 +7,8 @@ import { Renderer } from './renderer/renderer';
 import { GameObject, Container } from './renderer/game-object';
 import { Level } from './maps/level';
 import { Level1 } from './maps/level1';
+import { Pistol } from './weapons/gun';
+import { Vector2 } from '../utility/vector';
 
 export class Game {
     app: PIXI.Application;
@@ -16,6 +18,7 @@ export class Game {
     down: Keyboard;
 
     static dt: number;
+    static center: Vector2;
 
     private levels: Level[] = [new Level1()];
 
@@ -23,17 +26,19 @@ export class Game {
 
     setup(resources: string[], callback: Function) {        
         this.app = new PIXI.Application({width: Config.width, height: Config.height});
-        
+        Game.center = new Vector2(window.innerWidth/2, this.app.screen.y + (Config.height/2));
         this.app.view.style.left = '' + ((Config.windowWidth/2) - (Config.width/2));
         this.app.view.className = 'my-game';
 
         this.app.ticker.add((dt) => {if(this.state) this.state(dt);});
 
         this.app.stage.scale = new PIXI.Point(1,1);
+        Renderer.stage = this.app.stage;
 
         this.player = new Player();
         this.player.asset.x = Config.width/2;
         this.player.asset.y = Config.height/2;
+        this.player.setGun(Pistol);
         this.spawn(this.player);
 
         this.level = this.levels[0];
@@ -102,20 +107,18 @@ export class Game {
         this.app.view.style.left = ''+ ((window.innerWidth/2) - (gameWidth/2));
         this.app.renderer.resize(gameWidth, Config.height);
         this.player.asset.x = gameWidth/2;
+        Game.center = new Vector2(gameWidth/2, this.app.screen.y + (Config.height/2));
     }
 
     spawn(gameObject: GameObject){
         Renderer.add(gameObject);
-
-        this.app.stage.addChild(gameObject.asset);
     }
 
     addContainer(gameObject: Container){
         Renderer.add(gameObject);
+
         gameObject.children.forEach((child) => {
-            Renderer.add(child);
+            Renderer.add(child, false);
         });
-        
-        this.app.stage.addChild(gameObject.asset);
     }
 }
