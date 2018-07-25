@@ -25,6 +25,11 @@ export class Spawner extends GameObject {
             this.lastSpawn = 0;
             this.spawn();
         }
+
+        this.spawns.forEach((enemy) => {
+            var dir = Vector2.subtract(this.target.getPosition(), enemy.getPosition()).unitVector();
+            enemy.setVelocity(dir.x, dir.y);
+        });
     }
 
     protected spawn() {
@@ -37,7 +42,7 @@ export class Spawner extends GameObject {
         enemy.setVelocity(dir.x, dir.y);
 
         this.asset.addChild(enemy.asset);
-        
+
         Renderer.add(enemy, false);
         this.spawns.push(enemy);
     }
