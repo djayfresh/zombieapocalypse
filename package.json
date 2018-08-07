@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "webpack --mode development --watch",
-    "host": "http-server"
+    "host": "http-server -p 8081"
   },
   "dependencies": {
     "@types/pixi.js": "^4.8.0",

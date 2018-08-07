@@ -14,7 +14,6 @@ import { MainStage } from './stages/main.stage';
 
 export class Game {
     app: PIXI.Application;
-    static player: Player;
     level: Level;
     up: Keyboard;
     down: Keyboard;
@@ -40,14 +39,6 @@ export class Game {
 
         this.app.stage.scale = new PIXI.Point(1,1);
         Renderer.stage = this.app.stage;
-
-        var player = new Player();
-        Game.player = player;
-
-        player.asset.x = Config.width/2;
-        player.asset.y = Config.height/2;
-        player.setGun(Pistol);
-        this.spawn(player);
 
         this.stages = [new MainStage()];
         this.activeStage = this.stages[this.activeStageId];
@@ -150,12 +141,7 @@ export class Game {
         var gameWidth = (window.innerWidth * 0.75);
         this.app.view.style.left = ''+ ((window.innerWidth/2) - (gameWidth/2));
         this.app.renderer.resize(gameWidth, Config.height);
-        Game.player.asset.x = gameWidth/2;
         Game.center = new Vector2(gameWidth/2, this.app.screen.y + (gameWidth/2));
-    }
-
-    spawn(gameObject: GameObject){
-        Renderer.add(gameObject);
     }
 
     addContainer(gameObject: Container){
