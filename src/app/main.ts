@@ -9,6 +9,8 @@ import { Level } from './maps/level';
 import { Level1 } from './maps/level1';
 import { Pistol } from './weapons/gun';
 import { Vector2 } from '../utility/vector';
+import { IBaseStage } from './stages/base.stage';
+import { MainStage } from './stages/main.stage';
 
 export class Game {
     app: PIXI.Application;
@@ -22,7 +24,9 @@ export class Game {
     static dt: number;
     static center: Vector2;
 
-    private levels: Level[];
+    private stages: IBaseStage[];
+    private activeStage: IBaseStage;
+    private activeStageId: number = 0;
 
     state: (dt) => void;
 
@@ -45,9 +49,12 @@ export class Game {
         player.setGun(Pistol);
         this.spawn(player);
 
-        this.levels = [new Level1()];
-        this.level = this.levels[0];
-        this.initLevel();
+        this.stages = [new MainStage()];
+        this.activeStage = this.stages[this.activeStageId];
+
+        //this.levels = [new Level1()];
+        //this.level = this.levels[0];
+        //this.initLevel();
 
         this.up = new Keyboard(38);
         this.up.onClick(() => { this.app.stage.scale = new PIXI.Point(this.app.stage.scale.x + 0.1, this.app.stage.scale.y + 0.1); }, () => {});
@@ -84,13 +91,30 @@ export class Game {
     }
 
     private update(dt){
+        if(!this.activeStage.hasBeenSetup){
+            this.activeStage.setup();
+        }
+
         Game.dt = dt;
         
-        Renderer.update(dt, [{
-            shouldCheck: (g1, g2) => this.level.checkCollision(g1, g2),
-            hit: (g1, g2, loc) =>  this.level.onCollision(g1, g2, loc)
-        }]);
-        this.level.update(dt);
+        Renderer.update(dt, []);
+        //this.level.update(dt);
+
+        var isStageComplete = this.activeStage.isComplete();
+        if(!isStageComplete.completed){
+            this.activeStage.update(dt);
+        }
+
+        if(isStageComplete.completed && isStageComplete.success){
+            this.activeStage.clear();
+            this.nextStage();
+        }
+    }
+
+    private nextStage() {
+        console.log("Next stage", this.activeStageId);
+        this.activeStageId = ++this.activeStageId % this.stages.length;
+        this.activeStage = this.stages[this.activeStageId];
     }
 
     pause(){
@@ -127,7 +151,7 @@ export class Game {
         this.app.view.style.left = ''+ ((window.innerWidth/2) - (gameWidth/2));
         this.app.renderer.resize(gameWidth, Config.height);
         Game.player.asset.x = gameWidth/2;
-        Game.center = new Vector2(gameWidth/2, this.app.screen.y + (Config.height/2));
+        Game.center = new Vector2(gameWidth/2, this.app.screen.y + (gameWidth/2));
     }
 
     spawn(gameObject: GameObject){

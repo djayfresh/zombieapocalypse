@@ -9,7 +9,7 @@
     "assets": "assets"
   },
   "scripts": {
-    "watch": "webpack --mode development --watch",
+    "build": "webpack --mode development --watch",
     "host": "http-server"
   },
   "dependencies": {
