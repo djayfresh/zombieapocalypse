@@ -5,10 +5,12 @@ import { CollisionLocation } from '../../utility/collision-detection';
 import { Game } from '../main';
 import { Spawner } from '../spawners/spawner';
 import { Vector2 } from '../../utility/vector';
+import { Player } from '../characters/player';
 
 export class Level1 implements Level {
     spawners: Spawner[];
     levelContainer: Container;
+    private player: Player;
 
     onWin: () => void;
     onLose: () => void;
@@ -17,10 +19,11 @@ export class Level1 implements Level {
     left: Keyboard; right: Keyboard; up: Keyboard; down: Keyboard;
 
     constructor(){
-        this.setup();
     }
 
-    setup(): void {
+    setup(player: Player): void {
+        this.player = player;
+        
         var spawnerLocations = [
             new Vector2(100, 100),
             new Vector2(900, 100)
@@ -28,7 +31,7 @@ export class Level1 implements Level {
 
         this.spawners = [];
         spawnerLocations.forEach((path) => {
-            this.spawners.push(new Spawner([path], 500, 20, Game.player));
+            this.spawners.push(new Spawner([path], 500, 20, player));
         });
 
         //Initial setup
@@ -111,8 +114,8 @@ export class Level1 implements Level {
             else if(g2.assetType == AssetType.Enemy){
                 g2.destoryed = true;
 
-                Game.player.health--;
-                if(Game.player.health <= 0){
+                this.player.health--;
+                if(this.player.health <= 0){
                     this.onLose();
                 }
             }

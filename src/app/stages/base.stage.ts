@@ -1,7 +1,8 @@
+import { RendererV2 } from "../renderer/renderer-v2";
 
 export interface IBaseStage {
     hasBeenSetup: boolean;
-    stage: PIXI.Container;
+    renderer: RendererV2;
 
     setup();
     update(dt: number);

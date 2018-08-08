@@ -1,6 +1,7 @@
 import { GameObject, AssetType, Container } from "../renderer/game-object";
 import { CollisionLocation } from "../../utility/collision-detection";
 import { Spawner } from "../spawners/spawner";
+import { Player } from "../characters/player";
 
 export interface Level {
     levelContainer: Container;
@@ -10,8 +11,8 @@ export interface Level {
     onLose: () => void;
     onPause: () => void;
     
-    setup(): void;
-    update(dt): void;
+    setup(player: Player): void;
+    update(dt: number): void;
 
     checkCollision(g1: GameObject, g2: GameObject): boolean;
     onCollision(g1: GameObject, g2: GameObject, loc: CollisionLocation): void;

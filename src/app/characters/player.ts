@@ -1,7 +1,7 @@
 import { GameObject, AssetType } from "../renderer/game-object";
 import { Weapon, Bullet } from "../weapons/gun";
 import { Mouse, MouseButton } from "../../utility/mouse";
-import { Renderer } from "../renderer/renderer";
+import { RendererV2 } from "../renderer/renderer-v2";
 import { Vector2 } from "../../utility/vector";
 import { Game } from "../main";
 import { Config } from "../../config/base.config";
@@ -33,7 +33,7 @@ export class Player extends GameObject {
         }
     }
 
-    setGun(gun: Weapon){
+    setGun(gun: Weapon, renderer: RendererV2){
         this.gun = gun;
         this.gun.fired = () => {
             var bullet = new Bullet();
@@ -46,7 +46,7 @@ export class Player extends GameObject {
 
             bullet.setVelocity(directionOfMouse.x * this.gun.speed, directionOfMouse.y * this.gun.speed);
 
-            Renderer.add(bullet);
+            renderer.add(bullet);
         }
     }
 }

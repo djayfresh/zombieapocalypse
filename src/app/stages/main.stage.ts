@@ -3,17 +3,18 @@ import { Graphics, Text } from "pixi.js";
 import { Config } from "../../config/base.config";
 import { Renderer } from "../renderer/renderer";
 import { Game } from '../main';
+import { RendererV2 } from "../renderer/renderer-v2";
 
 
 export class MainStage implements IBaseStage {
     hasBeenSetup: boolean;
-    stage: PIXI.Container;
+    renderer: RendererV2;
 
     private playButton: Graphics;
     private begin: boolean;
 
     setup() {
-        this.stage = Renderer.stage;
+        this.renderer = new RendererV2(new PIXI.Container());
         this.hasBeenSetup = true;
 
         this.playButton = new Graphics();
@@ -31,13 +32,13 @@ export class MainStage implements IBaseStage {
             this.begin = true;
         });
 
-        this.stage.addChild(this.playButton);
+        this.renderer.addChild(this.playButton);
     }
 
     update() {}
 
     clear() {
-        this.stage.removeChild(this.playButton);
+        this.renderer.clear();
         this.hasBeenSetup = false;
         this.begin = false;
     }

@@ -23,6 +23,7 @@ export class Game {
     static dt: number;
     static center: Vector2;
 
+    static appContainer: PIXI.Container;
     private stages: IBaseStage[];
     private activeStage: IBaseStage;
     private activeStageId: number = 0;
@@ -38,7 +39,8 @@ export class Game {
         this.app.ticker.add((dt) => {if(this.state) this.state(dt);});
 
         this.app.stage.scale = new PIXI.Point(1,1);
-        Renderer.stage = this.app.stage;
+        Game.appContainer = this.app.stage;
+        Renderer.stage = Game.appContainer;
 
         this.stages = [new MainStage()];
         this.activeStage = this.stages[this.activeStageId];
