@@ -11,6 +11,7 @@ import { Pistol } from './weapons/gun';
 import { Vector2 } from '../utility/vector';
 import { IBaseStage } from './stages/base.stage';
 import { MainStage } from './stages/main.stage';
+import { PlayStage } from './stages/play.stage';
 
 export class Game {
     app: PIXI.Application;
@@ -42,7 +43,7 @@ export class Game {
         Game.appContainer = this.app.stage;
         Renderer.stage = Game.appContainer;
 
-        this.stages = [new MainStage()];
+        this.stages = [new MainStage(), new PlayStage()];
         this.activeStage = this.stages[this.activeStageId];
 
         //this.levels = [new Level1()];
@@ -86,6 +87,7 @@ export class Game {
     private update(dt){
         if(!this.activeStage.hasBeenSetup){
             this.activeStage.setup();
+            Game.appContainer.addChild(this.activeStage.renderer.stage);
         }
 
         Game.dt = dt;

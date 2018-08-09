@@ -23,7 +23,7 @@ export class MainStage implements IBaseStage {
         this.playButton.endFill();
         this.playButton.addChild(new Text('PLAY', { align: 'center' }));
 
-        this.playButton.x = Game.center.x - (this.playButton.width/2);
+        this.playButton.x = Game.center.x - (this.playButton.width * 2);
         this.playButton.y = Game.center.y - (this.playButton.height/2);
 
         this.playButton.interactive = true;

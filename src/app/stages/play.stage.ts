@@ -1,10 +1,8 @@
 import { IBaseStage, StageComplete } from "./base.stage";
 import { Container } from "pixi.js";
-import { Renderer } from "../renderer/renderer";
 import { Player } from "../characters/player";
 import { Config } from "../../config/base.config";
 import { Pistol } from "../weapons/gun";
-import { Game } from "../main";
 import { RendererV2 } from "../renderer/renderer-v2";
 
 export class PlayStage implements IBaseStage {
@@ -20,6 +18,8 @@ export class PlayStage implements IBaseStage {
     }
 
     setup() {
+        this.stageCompleted = {completed: false};
+
         this.levelStage = new Container();       
         this.renderer = new RendererV2(this.levelStage); 
 
@@ -29,13 +29,11 @@ export class PlayStage implements IBaseStage {
         this.player.setGun(Pistol, this.renderer);
         this.renderer.add(this.player);
 
-        this.renderer.stage.addChild(this.levelStage);
-
         this.hasBeenSetup = true;
     }
 
     update(dt: number) {
-
+        this.renderer.update(dt, []);
     }
 
     clear() {

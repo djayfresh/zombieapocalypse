@@ -1,3 +1,4 @@
+import { Game } from "../app/main";
 
 export enum MouseButton {
     Left = 0,
@@ -41,6 +42,7 @@ export class Mouse {
 
     //The `downHandler`
     private downHandler(event) {
+        console.log("Mouse", event);
         if(this.button == event.button){
             if (this.isUp && this.press) this.press();
             this.isDown = true;
@@ -69,9 +71,9 @@ export class Mouse {
         this.y = event.clientY;
     }
 
-    private move(event) {
+    private move(event: MouseEvent) {
         this.moveEvents.forEach((move) => {
-            move(event.screenX, event.screenY);
+            move(event.clientX, event.clientX);
         });
     }
 
