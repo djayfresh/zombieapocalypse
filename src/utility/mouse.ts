@@ -1,4 +1,4 @@
-import { Game } from "../app/main";
+import { Game } from "../app/game";
 
 export enum MouseButton {
     Left = 0,

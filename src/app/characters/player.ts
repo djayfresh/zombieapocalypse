@@ -3,7 +3,7 @@ import { Weapon, Bullet } from "../weapons/gun";
 import { Mouse, MouseButton } from "../../utility/mouse";
 import { RendererV2 } from "../renderer/renderer-v2";
 import { Vector2 } from "../../utility/vector";
-import { Game } from "../main";
+import { Game } from "../game";
 import { Config } from "../../config/base.config";
 
 export class Player extends GameObject {

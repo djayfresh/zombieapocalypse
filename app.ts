@@ -1,4 +1,4 @@
-import { Game } from './src/app/main';
+import { Game } from './src/app/game';
 
 var game = new Game();
 

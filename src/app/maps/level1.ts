@@ -2,7 +2,7 @@ import { Level, Wall } from './level';
 import { Container, AssetType, GameObject } from '../renderer/game-object';
 import { Keyboard } from '../../utility/keyboard';
 import { CollisionLocation } from '../../utility/collision-detection';
-import { Game } from '../main';
+import { Game } from '../game';
 import { Spawner } from '../spawners/spawner';
 import { Vector2 } from '../../utility/vector';
 import { Player } from '../characters/player';
