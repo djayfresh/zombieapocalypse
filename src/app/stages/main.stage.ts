@@ -1,9 +1,8 @@
 import { IBaseStage, StageComplete } from "./base.stage";
 import { Graphics, Text } from "pixi.js";
 import { Config } from "../../config/base.config";
-import { Renderer } from "../renderer/renderer";
-import { Game } from '../main';
 import { RendererV2 } from "../renderer/renderer-v2";
+import { Game } from '../game';
 
 
 export class MainStage implements IBaseStage {

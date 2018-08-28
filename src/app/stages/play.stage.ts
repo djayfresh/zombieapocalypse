@@ -1,10 +1,8 @@
 import { IBaseStage, StageComplete } from "./base.stage";
 import { Container } from "pixi.js";
-import { Renderer } from "../renderer/renderer";
 import { Player } from "../characters/player";
 import { Config } from "../../config/base.config";
 import { Pistol } from "../weapons/gun";
-import { Game } from "../main";
 import { RendererV2 } from "../renderer/renderer-v2";
 
 export class PlayStage implements IBaseStage {

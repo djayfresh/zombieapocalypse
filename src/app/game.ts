@@ -20,6 +20,8 @@ export class Game {
     esc: Keyboard;
     p: Keyboard;
 
+    static score: number = 0;
+
     static dt: number;
     static center: Vector2;
 

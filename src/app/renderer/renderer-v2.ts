@@ -1,7 +1,7 @@
 import { GameObject, AssetType } from "./game-object";
 import { OnHit } from "./renderer";
 import { CollisionDetection, CollisionLocation } from "../../utility/collision-detection";
-import { Game } from "../main";
+import { Game } from "../game";
 
 
 export class RendererV2 {
