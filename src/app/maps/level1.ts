@@ -22,8 +22,6 @@ export class Level1 implements Level {
     }
 
     setup(player: Player): void {
-        this.player = player;
-        
         var spawnerLocations = [
             new Vector2(100, 100),
             new Vector2(900, 100)
@@ -114,8 +112,8 @@ export class Level1 implements Level {
             else if(g2.assetType == AssetType.Enemy){
                 g2.destoryed = true;
 
-                this.player.health--;
-                if(this.player.health <= 0){
+                Game.score--;
+                if(Game.score <= 0){
                     this.onLose();
                 }
             }
