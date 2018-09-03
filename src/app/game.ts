@@ -3,7 +3,6 @@ import * as PIXI from 'pixi.js';
 import { Keyboard } from '../utility/keyboard';
 import { Config } from '../config/base.config';
 import { Player } from './characters/player';
-import { Renderer } from './renderer/renderer';
 import { GameObject, Container } from './renderer/game-object';
 import { Level } from './maps/level';
 import { Level1 } from './maps/level1';
@@ -43,14 +42,9 @@ export class Game {
 
         this.app.stage.scale = new PIXI.Point(1,1);
         Game.appContainer = this.app.stage;
-        Renderer.stage = Game.appContainer;
 
         this.stages = [new MainStage(), new PlayStage()];
         this.activeStage = this.stages[this.activeStageId];
-
-        //this.levels = [new Level1()];
-        //this.level = this.levels[0];
-        //this.initLevel();
 
         this.up = new Keyboard(38);
         this.up.onClick(() => { this.app.stage.scale = new PIXI.Point(this.app.stage.scale.x + 0.1, this.app.stage.scale.y + 0.1); }, () => {});
@@ -93,9 +87,6 @@ export class Game {
         }
 
         Game.dt = dt;
-        
-        Renderer.update(dt, []);
-        //this.level.update(dt);
 
         var isStageComplete = this.activeStage.isComplete();
         if(!isStageComplete.completed){
@@ -126,23 +117,6 @@ export class Game {
 
     }
 
-    private initLevel() {
-        this.level.onPause = () => {this.pause();}
-
-        this.level.onLose = () => { console.log("Lose"); this.clearLevel();}
-        this.level.onWin = () => { console.log("Win"); this.clearLevel();}
-
-        this.addContainer(this.level.levelContainer);
-    }
-
-    private clearLevel() {
-        Renderer.gameObjects.forEach((object) => {
-            this.app.stage.removeChild(object.asset);
-        });
-        Renderer.gameObjectId = 0;
-        Renderer.gameObjects = [];
-    }
-
     resize() {
         var gameWidth = (window.innerWidth * 0.75);
         this.app.view.style.left = ''+ ((window.innerWidth/2) - (gameWidth/2));
@@ -150,11 +124,5 @@ export class Game {
         Game.center = new Vector2(gameWidth/2, this.app.screen.y + (gameWidth/2));
     }
 
-    addContainer(gameObject: Container){
-        Renderer.add(gameObject);
-
-        gameObject.children.forEach((child) => {
-            Renderer.add(child, false);
-        });
-    }
+    
 }
