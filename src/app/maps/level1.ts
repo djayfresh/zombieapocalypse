@@ -10,8 +10,7 @@ import { Player } from '../characters/player';
 export class Level1 implements Level {
     spawners: Spawner[];
     levelContainer: Container;
-    private player: Player;
-
+    
     onWin: () => void;
     onLose: () => void;
     onPause: () => void;

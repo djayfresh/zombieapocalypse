@@ -6,7 +6,7 @@ window.addEventListener("resize", function() {
     game.resize();
 }, false);
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function() {
     game.setup([], () => {
         document.body.appendChild(game.app.view);
 

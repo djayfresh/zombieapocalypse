@@ -1,5 +1,4 @@
 import { Graphics, Text, interaction } from "pixi.js";
-import { Game } from "../game";
 import { GameObject, AssetType } from "./game-object";
 import { Observable, Subject, Observer } from "rxjs";
 

@@ -36,8 +36,10 @@ export class PlayStage implements IBaseStage {
         this.hasBeenSetup = true;
 
         this.levels = [new Level1()];
+        
         this.level = this.levels[0];
         this.level.setup(this.player);
+
         this.renderer.add(this.level.levelContainer);
     }
 
@@ -46,19 +48,7 @@ export class PlayStage implements IBaseStage {
         this.level.update(dt);
     }
 
-    pause(){
-        //Don't do nothin
-    }
-
     clear(){
         this.renderer.clear();
-    }
-
-    private clearLevel() {
-        this.renderer.gameObjects.forEach((object) => {
-            this.levelStage.removeChild(object.asset);
-        });
-        this.renderer.gameObjectId = 0;
-        this.renderer.gameObjects = [];
     }
 }

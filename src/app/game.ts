@@ -2,11 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import { Keyboard } from '../utility/keyboard';
 import { Config } from '../config/base.config';
-import { Player } from './characters/player';
-import { GameObject, Container } from './renderer/game-object';
 import { Level } from './maps/level';
-import { Level1 } from './maps/level1';
-import { Pistol } from './weapons/gun';
 import { Vector2 } from '../utility/vector';
 import { IBaseStage } from './stages/base.stage';
 import { MainStage } from './stages/main.stage';
@@ -113,9 +109,7 @@ export class Game {
         this.state = this.update;
     }
 
-    private stop(_dt) {
-
-    }
+    private stop() { }
 
     resize() {
         var gameWidth = (window.innerWidth * 0.75);

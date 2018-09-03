@@ -1,5 +1,4 @@
 import { GameObject, AssetType } from "../renderer/game-object";
-import { Vector2 } from "../../utility/vector";
 
 export class Enemy extends GameObject {
     asset: PIXI.Graphics;

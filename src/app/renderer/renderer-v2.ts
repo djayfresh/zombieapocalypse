@@ -1,4 +1,4 @@
-import { GameObject, AssetType } from "./game-object";
+import { GameObject } from "./game-object";
 import { OnHit } from "./renderer";
 import { CollisionDetection, CollisionLocation } from "../../utility/collision-detection";
 import { Game } from "../game";
