@@ -64,9 +64,10 @@ export class Mouse {
     //The `moveHandler`
     private moveHandler(event: MouseEvent) {
         if(this.move) this.move(event);
-
+        
+        //Could have also used srcElement
         this.x = event.clientX;
-        this.y = event.clientY;
+        this.y = event.clientY - event.toElement.getBoundingClientRect().top;
     }
 
     private move(event: MouseEvent) {
