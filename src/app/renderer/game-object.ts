@@ -55,6 +55,14 @@ export class Container extends GameObject {
 
         this.asset.addChild(gameObject.asset);
     }
+
+    update(dt){
+        super.update(dt);
+
+        this.children.forEach(child => {
+            child.update(dt);
+        });
+    };
 }
 
 export enum AssetType {

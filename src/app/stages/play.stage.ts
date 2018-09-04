@@ -33,14 +33,14 @@ export class PlayStage implements IBaseStage {
         this.player.setGun(Pistol, this.renderer);
         this.renderer.add(this.player);
 
-        this.hasBeenSetup = true;
 
         this.levels = [new Level1()];
         
         this.level = this.levels[0];
         this.level.setup(this.player);
-
         this.renderer.add(this.level.levelContainer);
+
+        this.hasBeenSetup = true;
     }
 
     update(dt: number) {

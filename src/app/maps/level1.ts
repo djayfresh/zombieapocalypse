@@ -57,6 +57,7 @@ export class Level1 implements Level {
 
         this.spawners.forEach((spawner) => {
             this.levelContainer.add(spawner);
+            spawner.onSpawn = (enemy: GameObject) => this.levelContainer.add(enemy);
         });
 
         this.left = new Keyboard(65);

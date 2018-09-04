@@ -1,6 +1,5 @@
 import { GameObject, AssetType } from "../renderer/game-object";
 import { Enemy } from "../characters/enemy";
-import { Renderer } from "../renderer/renderer";
 import { Vector2 } from "../../utility/vector";
 
 export class Spawner extends GameObject {
@@ -8,6 +7,8 @@ export class Spawner extends GameObject {
     private spawnCount: number = 0;
     private spawns: GameObject[] = [];
     asset: PIXI.Graphics;
+
+    onSpawn: (enemy: GameObject) => void;
 
     constructor(private path: Vector2[], protected spawnRate: number, protected maxSpawns: number, protected target: GameObject) {
         super(0, undefined, AssetType.Spawner);
@@ -34,16 +35,17 @@ export class Spawner extends GameObject {
 
     protected spawn() {
         var enemy = new Enemy(Math.random() + 0.25);
-        console.log("Spawn enemy", enemy);
 
         enemy.setPosition(this.path[0].x, this.path[0].y);
 
         var dir = Vector2.subtract(this.target.getPosition(), enemy.getPosition()).unitVector();
         enemy.setVelocity(dir.x, dir.y);
 
-        this.asset.addChild(enemy.asset);
+        console.log("Spawn enemy", enemy, "speed", enemy.velocity);
 
-        Renderer.add(enemy, false);
+        if(this.onSpawn){
+            this.onSpawn(enemy);
+        }
         this.spawns.push(enemy);
     }
 }
